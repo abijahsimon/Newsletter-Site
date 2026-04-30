@@ -208,6 +208,86 @@ h3 {
   color: white;
 }
 
+.support-callout {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  z-index: 1;
+  width: 116px;
+  height: 116px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  color: var(--deep);
+  background: var(--ucla-gold);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 20px 48px rgba(16, 24, 32, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.support-callout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 56px rgba(16, 24, 32, 0.34);
+}
+
+.support-callout::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(16, 24, 32, 0.16);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.support-icon,
+.support-text {
+  display: block;
+}
+
+.support-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.support-icon svg {
+  width: 34px;
+  height: 34px;
+  overflow: visible;
+}
+
+.support-icon .heart {
+  fill: var(--ucla-blue);
+}
+
+.support-icon .hand {
+  fill: none;
+  stroke: var(--deep);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.support-text {
+  max-width: 76px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
 .issue-meta {
   position: absolute;
   right: 32px;
@@ -633,6 +713,13 @@ details p {
     margin: 0 24px 24px;
   }
 
+  .support-callout {
+    top: 24px;
+    right: 24px;
+    width: 104px;
+    height: 104px;
+  }
+
   .hero-content {
     padding-left: 24px;
     padding-bottom: 36px;
@@ -668,6 +755,48 @@ details p {
 
   .brand-logo {
     width: min(245px, 64vw);
+  }
+
+  .support-callout {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: auto;
+    height: 46px;
+    min-width: 160px;
+    margin: 0 24px 18px;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 999px;
+    transform: none;
+  }
+
+  .support-callout:hover {
+    transform: translateY(-2px);
+  }
+
+  .support-callout::after {
+    inset: 5px;
+  }
+
+  .support-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .support-icon svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .support-text {
+    font-size: 0.96rem;
+    max-width: none;
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .contents-band,
