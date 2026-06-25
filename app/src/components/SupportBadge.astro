@@ -1,0 +1,57 @@
+---
+interface Props {
+  href: string;
+  label: string;
+}
+
+const { href, label } = Astro.props;
+---
+
+<a class="support-callout" href={href} aria-label={label}>
+  <svg class="support-badge" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="supportBadgeNavy" cx="36%" cy="28%" r="76%">
+        <stop offset="0" stop-color="#0a4f8b"></stop>
+        <stop offset="0.52" stop-color="#003b70"></stop>
+        <stop offset="1" stop-color="#002b56"></stop>
+      </radialGradient>
+      <linearGradient id="supportBadgeGold" x1="100" y1="54" x2="405" y2="462" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#ffe469"></stop>
+        <stop offset="0.42" stop-color="#ffd100"></stop>
+        <stop offset="1" stop-color="#f2b600"></stop>
+      </linearGradient>
+      <filter id="supportBadgeTextShadow" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#00172e" flood-opacity="0.35"></feDropShadow>
+      </filter>
+    </defs>
+    <circle cx="256" cy="256" r="246" fill="url(#supportBadgeGold)"></circle>
+    <circle cx="256" cy="256" r="226" fill="url(#supportBadgeNavy)"></circle>
+    <circle cx="256" cy="256" r="205" fill="none" stroke="url(#supportBadgeGold)" stroke-width="4"></circle>
+
+    <g class="support-badge-rays" fill="none" stroke="url(#supportBadgeGold)" stroke-linecap="round" stroke-width="10">
+      <path d="M256 78v24"></path>
+      <path d="M207 93l12 22"></path>
+      <path d="M305 93l-12 22"></path>
+      <path d="M167 128l23 15"></path>
+      <path d="M345 143l23-15"></path>
+    </g>
+
+    <path class="support-badge-heart" d="M256 135c-27-34-77-10-70 35 5 30 39 54 70 82 31-28 65-52 70-82 7-45-43-69-70-35Z" fill="url(#supportBadgeGold)" transform="translate(0 -26)"></path>
+    <g class="support-badge-hands" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="11" transform="translate(0 -26)">
+      <path d="M181 211v-61c0-8-7-15-15-15s-15 7-15 15v44c0 24 9 44 26 61l28 29v28h81v-62c0-18-7-35-20-48l-47-45c-8-8-20-7-28 1-7 8-7 20 1 28l42 40"></path>
+      <path d="M151 194v-36c0-8-6-14-14-14s-14 6-14 14v38c0 29 12 55 32 75l27 26"></path>
+      <path d="M331 211v-61c0-8 7-15 15-15s15 7 15 15v44c0 24-9 44-26 61l-28 29v28h-81v-62c0-18-7-35-20-48l47-45c8-8 20-7 28 1 7 8 7 20-1 28l-42 40"></path>
+      <path d="M361 194v-36c0-8 6-14 14-14s14 6 14 14v38c0 29-12 55-32 75l-27 26"></path>
+    </g>
+
+    <text x="256" y="323" fill="#fff" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="70" font-weight="900" letter-spacing="4" text-anchor="middle" filter="url(#supportBadgeTextShadow)">GIVE TO</text>
+    <text x="256" y="407" fill="url(#supportBadgeGold)" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="104" font-weight="900" letter-spacing="3" text-anchor="middle">EPSS</text>
+
+    <g fill="url(#supportBadgeGold)">
+      <path d="m256 419 13 27 27 13-27 13-13 27-13-27-27-13 27-13Z"></path>
+      <path d="M158 459h68" stroke="url(#supportBadgeGold)" stroke-linecap="round" stroke-width="5"></path>
+      <path d="M286 459h68" stroke="url(#supportBadgeGold)" stroke-linecap="round" stroke-width="5"></path>
+    </g>
+  </svg>
+</a>
+

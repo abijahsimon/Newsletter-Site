@@ -1,0 +1,238 @@
+---
+import { getCollection, render } from "astro:content";
+import SupportBadge from "../components/SupportBadge.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+type Link = { label: string; href: string };
+type UnknownRecord = Record<string, any>;
+
+const issues = await getCollection("issues");
+const issueEntry = issues
+  .filter((entry) => entry.data.status === "published")
+  .sort((a, b) => b.data.year - a.data.year)[0];
+
+if (!issueEntry) {
+  throw new Error("No published newsletter issue was found.");
+}
+
+const issue = issueEntry.data;
+const sections = issue.sections as UnknownRecord[];
+const articleEntries = (await getCollection("articles"))
+  .filter((entry) => entry.data.issue === issue.year && entry.data.status === "published");
+
+const renderedArticles = await Promise.all(
+  articleEntries.map(async (entry) => {
+    const { Content } = await render(entry);
+    return [entry.data.articleId, { data: entry.data, Content }] as const;
+  }),
+);
+
+const articles = new Map(renderedArticles);
+---
+
+<BaseLayout title={issue.title} description={issue.seoDescription}>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="EPSS Newsletter home">
+      <img src={issue.brand.image} alt={issue.brand.alt} class="brand-logo" />
+    </a>
+    <nav class="desktop-nav" aria-label="Primary">
+      {issue.navigation.map((link: Link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile">
+    {issue.navigation.map((link: Link) => <a href={link.href}>{link.label}</a>)}
+  </nav>
+
+  <main id="top">
+    <section class="issue-hero" aria-labelledby="issue-title">
+      <img src={issue.hero.image} alt={issue.hero.imageAlt} class="hero-image" />
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="kicker">{issue.hero.kicker}</p>
+        <h1 id="issue-title">{issue.hero.title}</h1>
+        <p class="dek">{issue.hero.dek}</p>
+        <div class="hero-actions" aria-label="Issue actions">
+          {issue.hero.actions.map((action: Link, index: number) => (
+            <a class:list={["button", index === 0 ? "primary" : "secondary"]} href={action.href}>{action.label}</a>
+          ))}
+        </div>
+      </div>
+      <SupportBadge href={issue.hero.supportCta.href} label={issue.hero.supportCta.label} />
+      <aside class="issue-meta" aria-label="Issue summary">
+        <span>{issue.hero.meta.eyebrow}</span>
+        <strong>{issue.hero.meta.title}</strong>
+        <span>{issue.hero.meta.body}</span>
+      </aside>
+    </section>
+
+    {sections.map((section) => (
+      <>
+        {section.type === "planning" && (
+          <section id={section.id} class="planning-board" aria-labelledby={`${section.id}-title`}>
+            <div class="section-heading compact">
+              <p class="kicker">{section.kicker}</p>
+              <h2 id={`${section.id}-title`}>{section.title}</h2>
+              <p>{section.intro}</p>
+            </div>
+            <div class="plan-lanes">
+              {section.lanes.map((lane: UnknownRecord) => (
+                <article class="plan-lane">
+                  <h3>{lane.title}</h3>
+                  <ul>
+                    {lane.items.map((item: UnknownRecord) => (
+                      <li><strong>{item.title}</strong><span>{item.detail}</span></li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {section.type === "features" && (
+          <section id={section.id} class="feature-layout" aria-label={section.ariaLabel}>
+            {section.stories.map((story: UnknownRecord) => (
+              <article id={story.id} class:list={["story", story.variant]}>
+                <div class="story-media">
+                  <img src={story.image} alt={story.imageAlt} />
+                </div>
+                <div class="story-copy">
+                  <p class="category">{story.category}</p>
+                  <h2>{story.title}</h2>
+                  <p>{story.summary}</p>
+                  <a href={story.link.href} class="text-link">{story.link.label}</a>
+                </div>
+              </article>
+            ))}
+          </section>
+        )}
+
+        {section.type === "briefs" && (
+          <section id={section.id} class="briefs-band" aria-labelledby={`${section.id}-title`}>
+            <div class="section-heading compact">
+              <p class="kicker">{section.kicker}</p>
+              <h2 id={`${section.id}-title`}>{section.title}</h2>
+              <p>{section.intro}</p>
+            </div>
+            <div class="brief-grid">
+              {section.cards.map((card: UnknownRecord) => (
+                <article id={card.id} class:list={["brief-card", card.variant]}>
+                  <p class="category">{card.category}</p>
+                  <h3>{card.title}</h3>
+                  <p>{card.summary}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {section.type === "community" && (
+          <section id={section.id} class="story-index" aria-labelledby={`${section.id}-title`}>
+            <div class="section-heading compact">
+              <p class="kicker">{section.kicker}</p>
+              <h2 id={`${section.id}-title`}>{section.title}</h2>
+            </div>
+            <div class="card-grid">
+              {section.cards.map((card: UnknownRecord) => (
+                <article id={card.id} class="story-card">
+                  <img src={card.image} alt={card.imageAlt} />
+                  <p class="category">{card.category}</p>
+                  <h3>{card.title}</h3>
+                  <p>{card.summary}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {section.type === "research" && (
+          <section id={section.id} class="qa-band" aria-labelledby={`${section.id}-title`}>
+            <div>
+              <p class="kicker">{section.kicker}</p>
+              <h2 id={`${section.id}-title`}>{section.title}</h2>
+              <p>{section.intro}</p>
+            </div>
+            <div class="qa-list">
+              {section.items.map((item: UnknownRecord) => (
+                <details open={item.open}>
+                  <summary>{item.title}</summary>
+                  <p>{item.body}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {section.type === "recognition" && (
+          <section class="recognition-layout" aria-label={section.ariaLabel}>
+            {section.panels.map((panel: UnknownRecord) => (
+              <article id={panel.id} class:list={["recognition-panel", panel.variant]}>
+                {panel.image && <img src={panel.image} alt={panel.imageAlt} />}
+                <div>
+                  <p class="category">{panel.category}</p>
+                  <h2 id={panel.headingId}>{panel.title}</h2>
+                  <p>{panel.summary}</p>
+                  {panel.link && <a class="button primary" href={panel.link.href}>{panel.link.label}</a>}
+                </div>
+              </article>
+            ))}
+          </section>
+        )}
+
+        {section.type === "articles" && (
+          <section class="article-shell" aria-label={section.ariaLabel}>
+            {section.articleIds.map((articleId: string) => {
+              const article = articles.get(articleId);
+              if (!article) return null;
+              const ArticleContent = article.Content;
+              return (
+                <article id={articleId} class:list={["article-placeholder", article.data.variant === "feature" && "feature-article"]}>
+                  <p class="category">{article.data.category}</p>
+                  <h2>{article.data.title}</h2>
+                  <ArticleContent />
+                </article>
+              );
+            })}
+          </section>
+        )}
+
+        {section.type === "notes" && (
+          <section id={section.id} class="template-notes" aria-labelledby={`${section.id}-title`}>
+            <div class="section-heading compact">
+              <p class="kicker">{section.kicker}</p>
+              <h2 id={`${section.id}-title`}>{section.title}</h2>
+            </div>
+            <ul>
+              {section.items.map((item: string) => <li>{item}</li>)}
+            </ul>
+          </section>
+        )}
+
+        {section.type === "contents" && (
+          <section id={section.id} class="contents-band footer-contents" aria-labelledby={`${section.id}-title`}>
+            <div class="section-heading">
+              <p class="kicker">{section.kicker}</p>
+              <h2 id={`${section.id}-title`}>{section.title}</h2>
+            </div>
+            <div class="contents-grid">
+              {section.links.map((link: Link) => <a href={link.href}>{link.label}</a>)}
+            </div>
+          </section>
+        )}
+      </>
+    ))}
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>{issue.footer.organization}</strong>
+      <p>{issue.footer.description}</p>
+    </div>
+    <a href="#top">{issue.footer.backToTopLabel}</a>
+  </footer>
+</BaseLayout>
+
